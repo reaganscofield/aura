@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+    web:
+        build: .
+        command: python manage.py runserver 0.0.0.0:4700
+        volumes:
+            - .:/code
+        ports:
+            - "4700:4700"
+        depends_on:
+            - postgres
+    db:
+        image: postgres
+
+    postgres:
+        image: postgres
+        hostname: postgres
+        ports:
+            - "6540:5432"
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: TEST_SM
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+        restart: unless-stopped
+
+    pgadmin:
+        image: dpage/pgadmin4
+        depends_on:
+            - postgres
+        ports:
+            - "5555:80"
+        environment:
+            PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+            PGADMIN_DEFAULT_PASSWORD: admin
+        restart: unless-stopped
+    
+    aura_frontend:
+        build: ./aura_frontend
+        volumes:
+            - ./aura_frontend:/react_redux
+            - /react_redux/node_modules
+        ports:
+            - "6075:6075"
+        environment:
+            - NODE_ENV=development
+        depends_on:
+            - web
+        command: npm start
+   
+volumes:
+  postgres-data:
+
+
+
+
+

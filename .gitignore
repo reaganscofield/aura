@@ -1,0 +1,12 @@
+aura_frontend/node_modules
+aura_frontend/coverage
+aura_frontend/build
+aura_frontend/.DS_Store
+aura_frontend/.env.local
+aura_frontend/.env.development.local
+aura_frontend/.env.test.local
+aura_frontend/.env.production.local
+aura_frontend/npm-debug.log*
+aura_frontend/yarn-debug.log*
+aura_frontend/yarn-error.log*
+.env
