@@ -1,7 +1,9 @@
 import initialState from './initialState';
+import { reducer as usersReducer } from './users';
 
 
 const reducers = [
+  usersReducer,
 
 ];
 

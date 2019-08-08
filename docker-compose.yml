@@ -31,7 +31,7 @@ services:
         depends_on:
             - postgres
         ports:
-            - "5555:80"
+            - "5556:80"
         environment:
             PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
             PGADMIN_DEFAULT_PASSWORD: admin
@@ -44,6 +44,7 @@ services:
             - /react_redux/node_modules
         ports:
             - "6075:6075"
+            - "6076:6076"
         environment:
             - NODE_ENV=development
         depends_on:

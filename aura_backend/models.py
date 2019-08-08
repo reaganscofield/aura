@@ -10,6 +10,7 @@ class Users(AbstractUser):
     address_street = models.CharField(max_length=250, null=True, default=None)
     address_suburb = models.CharField(max_length=250, null=True, default=None)
     address_city = models.CharField(max_length=250, null=True, default=None)
+    address_region = models.CharField(max_length=250, null=True, default=None)
     address_country = models.CharField(max_length=250, null=True, default=None)
     address_zip = models.IntegerField(null=True, default=None)
 

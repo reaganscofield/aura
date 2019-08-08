@@ -6,6 +6,7 @@ import routeConfig from './common/routeConfig';
 import Root from './Root';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+require('dotenv').config();
 
 const store = configStore();
 

@@ -7,7 +7,7 @@ class UsersSerializers(serializers.ModelSerializer):
         model = Users
         fields = [ 
             "id", "email", "username", "first_name", "last_name", "phone_number", "address_zip",
-            "address_street", "address_suburb", "address_city", "address_country"
+            "address_street", "address_suburb", "address_city", "address_country", "address_region"
         ]
         read_only_fields = ["id"]
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from './redux/actions';
+import Navigations from './Navigations'
 import moment from "moment";
 
 
@@ -30,9 +31,25 @@ export class DefaultPage extends Component {
 
     return (
       <div className="home-default-page">
-       <div className="container mt-5">
-         <h1>Welcome</h1>
-       </div>
+        <Navigations />
+      <div className="home-page" id="top">
+        <div className="hero-banner">
+          <div className="row">
+            <div className="hero-banner__left large-3 columns">
+            </div>
+            <div className="hero-banner__middle large-6 columns">
+              <h1>
+                Request Panic
+              </h1>
+              <button className="button-large white" data-open="contact-modal">Get in touch</button>
+              <div className="rwd-devices">
+              </div>
+            </div>
+            <div className="hero-banner__right large-3 columns">
+            </div>
+          </div>
+        </div>
+        </div>
       </div>
     );
   }
