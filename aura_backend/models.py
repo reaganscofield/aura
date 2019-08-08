@@ -76,7 +76,7 @@ class Panics(models.Model):
     company_id = models.ForeignKey(Companies, on_delete=models.CASCADE)
     agent_id = models.ForeignKey(SecurityAgents, blank=False, null=False, on_delete=models.CASCADE)
     client_username = models.CharField(max_length=250, null=True, default=None)
-    client_phone_number = models.IntegerField(max_length=250, null=True, default=None)
+    client_phone_number = models.IntegerField(null=True, default=None)
     client_email = models.CharField(max_length=250, null=True, default=None)
     panics_name = models.CharField(max_length=250, null=True, default=None)
 

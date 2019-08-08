@@ -83,7 +83,7 @@ class SecurityAgentsSerializers(serializers.ModelSerializer):
         read_only_fields = ["id"]
 
 
-        
+
 class PanicsSerializers(serializers.ModelSerializer):
     class Meta:
         model = Panics
@@ -94,12 +94,10 @@ class PanicsSerializers(serializers.ModelSerializer):
         read_only_fields = ["id", "timestamp"]
     
     def validate(self, values):
-        if values["client_phone_number"] == None:
+        if values["client_phone_number"] == None or values["client_phone_number"] is "":
             raise serializers.ValidationError("phone number is required")
         if values["client_username"] == None:
             raise serializers.ValidationError("username is required")
-    
-        # values["client_phone_number"] = 10 # int(values["client_phone_number"])
-                 
+ 
         return values
  
