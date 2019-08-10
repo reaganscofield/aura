@@ -76,7 +76,7 @@ class SecurityAgentsSerializers(serializers.ModelSerializer):
     class Meta:
         model = SecurityAgents
         fields = [ 
-            "id", "email", "company_id", "first_name", "last_name", "phone_number", 
+            "id", "email", "username", "company_id", "first_name", "last_name", "phone_number", 
             "current_location_street", "current_location_suburb", "current_location_city", 
             "current_location_country", "vehicule_id", "current_location_zip", "is_online"
         ]
@@ -88,10 +88,10 @@ class PanicsSerializers(serializers.ModelSerializer):
     class Meta:
         model = Panics
         fields = [
-            "id", "client_id", "agent_id", "panics_name", "timestamp",
+            "id", "client_id", "agent_id", "panics_name", "timestamp", "panics_number",
             "client_phone_number", "client_username", "company_id", "client_email"
         ]
-        read_only_fields = ["id", "timestamp"]
+        read_only_fields = ["id", "panics_number", "timestamp"]
     
     def validate(self, values):
         if values["client_phone_number"] == None or values["client_phone_number"] is "":

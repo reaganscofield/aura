@@ -5,3 +5,5 @@ export { default as Users } from './Users';
 export { default as Companies } from './Companies';
 export { default as SecurityAgentsJs } from './SecurityAgentsJs';
 export { default as Panics } from './Panics';
+export { default as RequestPanics } from './RequestPanics';
+export { default as Request } from './Request';

@@ -5,27 +5,24 @@ import {
   HOME_USERS_DISMISS_ERROR,
 } from './constants';
 import axios from 'axios';
-import { __host__, __port__ }  from '../../../common/constan';
-
+import { __host__, __port__ } from '../../../common/constan';
 
 export function users(args) {
-
-  return (dispatch) => { 
+  return dispatch => {
     dispatch({
       type: HOME_USERS_BEGIN,
     });
 
     const promise = new Promise((resolve, reject) => {
-
       axios.post(`http://${__host__}:${__port__}/users/`, args).then(
-        (res) => {
+        res => {
           dispatch({
             type: HOME_USERS_SUCCESS,
             data: res.data,
           });
           resolve(res);
         },
-        (err) => {
+        err => {
           dispatch({
             type: HOME_USERS_FAILURE,
             data: { error: err },
@@ -33,7 +30,6 @@ export function users(args) {
           reject(err);
         },
       );
-      
     });
 
     return promise;
@@ -49,7 +45,6 @@ export function dismissUsersError() {
 export function reducer(state, action) {
   switch (action.type) {
     case HOME_USERS_BEGIN:
-    
       return {
         ...state,
         usersPending: true,
@@ -57,16 +52,14 @@ export function reducer(state, action) {
       };
 
     case HOME_USERS_SUCCESS:
-   
       return {
         ...state,
         usersPending: false,
         usersError: null,
-        data: action.data,
+        user: action.data,
       };
 
     case HOME_USERS_FAILURE:
-     
       return {
         ...state,
         usersPending: false,
@@ -74,7 +67,6 @@ export function reducer(state, action) {
       };
 
     case HOME_USERS_DISMISS_ERROR:
-     
       return {
         ...state,
         usersError: null,

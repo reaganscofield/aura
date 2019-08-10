@@ -13,6 +13,10 @@ router.register('security_agent', views.SecuriyAgentsView)
 router.register('request_panics', views.PanicsView)
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    path('', include(router.urls))
+    url(r'^admin/', admin.site.urls), 
+    path('', include(router.urls)),
+    url(r'^agent_search/', views.AgentsSearch.as_view(), name="agents-search"),
+    url(r'^company_search/', views.CompaniesSearch.as_view(), name="companies-search"),
+    url(r'^filter_vehicule/', views.VehiculesFilters.as_view(), name="vehicules-filters"),
+    url(r'^find_user/(?P<username>[\w.@+-]+)/$', views.FindUser.as_view(), name='find-user'),
 ]

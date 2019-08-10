@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from './redux/actions';
+import Navigations from './Navigations';
 
 export class Users extends Component {
   static propTypes = {
@@ -10,10 +11,9 @@ export class Users extends Component {
     actions: PropTypes.object.isRequired,
   };
   constructor(props) {
-    super(props)
-  
-    this.state = {
+    super(props);
 
+    this.state = {
       username: '',
       email: '',
       firstname: '',
@@ -26,306 +26,427 @@ export class Users extends Component {
       country: '',
       region: '',
       general_validate_css: {},
-      general_error_msg: null,
-      phone_number_css: {
-        width: '100%',
-        border: '1px solid #ced4da',
-        backgroundColor: '#fff'
-      },
+      general_error_msg: '',
 
       failed: null,
       success: null,
-
-    }
+    };
   }
-
 
   handleChanged = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  onChange = (event) => {
+  onChange = event => {
     this.setState({
-      phone_number: event.target.value
+      phone_number: event.target.value,
     });
-  }
+  };
 
-  validates = (args) => {
+  validates = args => {
     let message;
-    if (args === 'invalid email'){
-      message = 'your is invalid please enter a valid email address'
+    if (args === 'invalid email') {
+      message = 'your is invalid please enter a valid email address';
     } else {
-      message = 'field is required please enter your'
+      message = 'field is required please enter your';
     }
     this.setState({
-        general_validate_css: {
-            border: '1px solid red',
-        },
-        general_error_msg: `${args} ${message} ${args}`,
+      general_validate_css: {
+        border: '1px solid red',
+      },
+      general_error_msg: `${args} ${message} ${args}`,
     });
     setTimeout(() => {
       this.setState({
         general_validate_css: {},
-        general_error_msg: null,
-      })
+        general_error_msg: '',
+      });
     }, 3000);
-  }
+  };
 
-  submisson = (event) => {
+  keyChecking = (args__, args) => {
+    if (args__.includes(args)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  submisson = event => {
     event.preventDefault();
     const {
-      username, email, firstname, lastname, city,
-      street, suburb, zip, country, region, phone_number
+      username,
+      email,
+      firstname,
+      lastname,
+      city,
+      street,
+      suburb,
+      zip,
+      country,
+      region,
+      phone_number,
     } = this.state;
     const regx_email = /[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+/;
-    if(username === '' || username === null) {
-        this.validates('username');
-    } else if (email === '' || email === null) {
-        this.validates('email');
+    if (username === '') {
+      this.validates('username');
+    } else if (email === '') {
+      this.validates('email');
     } else if (!regx_email.test(email)) {
-        this.validates('invalid email');
-    } else if (email === '' || email === null) {
-        this.validates('email');
-    } else if (phone_number === null || phone_number === '') {
-        this.validates('phone number');
-    } else if (firstname === '' || firstname === null){
-        this.validates('first name');
-    } else if (lastname === '' || lastname === null) {
-        this.validates('last name');
-    } else if (street === '' || street === null) {
-        this.validates('street');
-    }  else if (suburb === '' || suburb === null) {
-        this.validates('suburb');
-    } else if (city === '' || city === null) {
-        this.validates('city');
-    } else if (region === '' || region === null) {
-        this.validates('region');
-    } else if (country === '' || country === null) {
-        this.validates('country');
+      this.validates('invalid email');
+    } else if (email === '') {
+      this.validates('email');
+    } else if (phone_number === null) {
+      this.validates('phone number');
+    } else if (firstname === '') {
+      this.validates('firstname');
+    } else if (lastname === '') {
+      this.validates('lastname');
+    } else if (street === '') {
+      this.validates('street');
+    } else if (suburb === '') {
+      this.validates('suburb');
+    } else if (city === '') {
+      this.validates('city');
     } else {
       const user_data = {
-        username: username, 
-        email: email, 
-        first_name: firstname, 
-        last_name: lastname, 
+        username: username,
+        email: email,
+        first_name: firstname,
+        last_name: lastname,
         phone_number: phone_number,
         address_city: city,
-        address_street: street, 
-        address_suburb: suburb, 
+        address_street: street,
+        address_suburb: suburb,
         address_zip: zip,
-        address_country: country, 
-        address_region: region
-      }
-      this.props.actions.users(user_data).then((res) => {
-        if(res.data){
-          this.setState({
-            success: "you have success created your account"
-          });
-        }
-      }).catch((error) => {
-        const __error = this.props.home.usersError.response.data;
-        if(__error){
-          const __error__ = __error.username;
-          if(__error__[0].includes(`A user with that username already exists`)){
+        address_country: country,
+        address_region: region,
+      };
+      this.props.actions
+        .users(user_data)
+        .then(res => {
+          if (res.data) {
             this.setState({
-              failed: "user with that username already exists choose another username"
+              success: 'you have success created your account',
             });
           }
-        }
-      })
+        })
+        .catch(error => {
+          const __error = this.props.home.usersError.response.data;
+          if (__error) {
+            const __error__ = __error.username;
+            if (__error__[0].includes(`A user with that username already exists`)) {
+              this.setState({
+                failed: 'user with that username already exists choose another username',
+              });
+            }
+          }
+        });
     }
-  }
-  
+  };
 
   render() {
     return (
       <div className="home-users">
-        <h1 className="text-danger">{this.state.failed}</h1>
-        <h1 className="text-success">{this.state.success}</h1>
-        <form onSubmit={this.submisson}>
-                <div className="form-group">
-                  <label>Username</label>
-                  <input
-                    style={this.state.general_validate_css}
-                    onChange={this.handleChanged}
-                    value={this.state.username}
-                    name="username"
-                    type="text"
-                    className="form-control"
-                  />
-                  <small id="emailHelp" className="form-text text-danger">
-                    {this.state.general_error_msg}
-                  </small>
-                </div>
-                <div className="form-group">
-                  <label>Email</label>
-                  <input
-                    style={this.state.general_validate_css}
-                    onChange={this.handleChanged}
-                    value={this.state.email}
-                    name="email"
-                    type="text"
-                    className="form-control"
-                  />
-                  <small id="emailHelp" className="form-text text-danger">
-                    {this.state.general_error_msg}
-                  </small>
-                </div>
-                <div className="form-group">
-                  <label>Fist Name</label>
-                  <input
-                    style={this.state.general_validate_css}
-                    onChange={this.handleChanged}
-                    value={this.state.firstname}
-                    name="firstname"
-                    type="text"
-                    className="form-control"
-                  />
-                  <small id="emailHelp" className="form-text text-danger">
-                    {this.state.general_error_msg}
-                  </small>
-                </div>
-                <div className="form-group">
-                  <label>Last Name</label>
-                  <input
-                    style={this.state.general_validate_css}
-                    onChange={this.handleChanged}
-                    value={this.state.lastname}
-                    name="lastname"
-                    type="text"
-                    className="form-control"
-                  />
-                  <small id="emailHelp" className="form-text text-danger">
-                    {this.state.lastname_validate}
-                  </small>
-                </div>
+        <Navigations />
+        <div>
+          <div className="container pt-5 mb-3">
+            <div className="row pt-5">
+              <div className="col-lg-6">
+                {this.state.success !== null ? (
+                  <div class="alert alert-success text-center" role="alert">
+                    {this.state.success}
+                  </div>
+                ) : null}
+                {this.state.failed !== null ? (
+                  <div class="alert alert-danger text-center" role="alert">
+                    {this.state.failed}
+                  </div>
+                ) : null}
+                <form onSubmit={this.submisson}>
+                  <div className="form-group">
+                    <label>Username</label>
+                    <input
+                      style={
+                        !this.state.username &&
+                        this.keyChecking(this.state.general_error_msg, 'username')
+                          ? this.state.general_validate_css
+                          : {}
+                      }
+                      onChange={this.handleChanged}
+                      value={this.state.username}
+                      name="username"
+                      type="text"
+                      className="form-control"
+                      placeholder="jhondoe"
+                    />
+                    {!this.state.username &&
+                    this.keyChecking(this.state.general_error_msg, 'username') ? (
+                      <small id="emailHelp" className="form-text text-danger">
+                        {this.state.general_error_msg}
+                      </small>
+                    ) : null}
+                  </div>
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input
+                      style={
+                        !this.state.email && this.keyChecking(this.state.general_error_msg, 'email')
+                          ? this.state.general_validate_css
+                          : {}
+                      }
+                      onChange={this.handleChanged}
+                      value={this.state.email}
+                      name="email"
+                      type="text"
+                      className="form-control"
+                      placeholder="jhondoe@mail.com"
+                    />
+                    {!this.state.email &&
+                    this.keyChecking(this.state.general_error_msg, 'email') ? (
+                      <small id="emailHelp" className="form-text text-danger">
+                        {this.state.general_error_msg}
+                      </small>
+                    ) : null}
+                  </div>
+                  <div className="form-group">
+                    <label>First Name</label>
+                    <input
+                      style={
+                        !this.state.firstname &&
+                        this.keyChecking(this.state.general_error_msg, 'firstname')
+                          ? this.state.general_validate_css
+                          : {}
+                      }
+                      onChange={this.handleChanged}
+                      value={this.state.firstname}
+                      name="firstname"
+                      type="text"
+                      className="form-control"
+                      placeholder="Jhon"
+                    />
+                    {!this.state.firstname &&
+                    this.keyChecking(this.state.general_error_msg, 'firstname') ? (
+                      <small id="emailHelp" className="form-text text-danger">
+                        {this.state.general_error_msg}
+                      </small>
+                    ) : null}
+                  </div>
+                  <div className="form-group">
+                    <label>Last Name</label>
+                    <input
+                      style={
+                        !this.state.lastname &&
+                        this.keyChecking(this.state.general_error_msg, 'lastname')
+                          ? this.state.general_validate_css
+                          : {}
+                      }
+                      onChange={this.handleChanged}
+                      value={this.state.lastname}
+                      name="lastname"
+                      type="text"
+                      className="form-control"
+                      placeholder="Doe"
+                    />
+                    {!this.state.lastname &&
+                    this.keyChecking(this.state.general_error_msg, 'lastname') ? (
+                      <small id="emailHelp" className="form-text text-danger">
+                        {this.state.general_error_msg}
+                      </small>
+                    ) : null}
+                  </div>
 
+                  <div className="form-group">
+                    <label>Contact Number</label>
+                    <input
+                      style={
+                        !this.state.phone_number &&
+                        this.keyChecking(this.state.general_error_msg, 'phone number')
+                          ? this.state.general_validate_css
+                          : {}
+                      }
+                      onChange={this.handleChanged}
+                      value={this.state.phone_number || ''}
+                      name="phone_number"
+                      type="number"
+                      className="form-control"
+                      placeholder="110002233"
+                    />
+                    {!this.state.phone_number &&
+                    this.keyChecking(this.state.general_error_msg, 'phone number') ? (
+                      <small className="form-text text-danger">
+                        {this.state.general_error_msg}
+                      </small>
+                    ) : null}
+                  </div>
 
-                {/* <div className="form-group">
-                  <label>Contact Number</label>
-                  <ReactPhoneInput
-                    defaultCountry={'za'}
-                    inputStyle={styleObj}
-                    value={this.state.phone_number}
-                    onChange={ phone_number => this.setState({ phone_number }) } 
-                  />
-                  <small id="emailHelp" className="form-text text-danger">
-                    {this.state.general_error_msg}
-                  </small>
-                </div> */}
+                  <div className="form-group">
+                    <label>Street</label>
+                    <input
+                      style={
+                        !this.state.street &&
+                        this.keyChecking(this.state.general_error_msg, 'street')
+                          ? this.state.general_validate_css
+                          : {}
+                      }
+                      onChange={this.handleChanged}
+                      value={this.state.street}
+                      name="street"
+                      type="text"
+                      className="form-control"
+                      placeholder="23 Fox Street"
+                    />
+                    {!this.state.street &&
+                    this.keyChecking(this.state.general_error_msg, 'street') ? (
+                      <small id="emailHelp" className="form-text text-danger">
+                        {this.state.general_error_msg}
+                      </small>
+                    ) : null}
+                  </div>
 
-                
-                <div className="form-group">
-                  <label>Street</label>
-                  <input
-                    style={this.state.general_validate_css}
-                    onChange={this.handleChanged}
-                    value={this.state.street}
-                    name="street"
-                    type="text"
-                    className="form-control"
-                    placeholder="23 Fox Street"
-                  />
-                  <small id="emailHelp" className="form-text text-danger">
-                    {this.state.general_error_msg}
-                  </small>
-                </div>
+                  <div className="form-group">
+                    <label>Suburb</label>
+                    <input
+                      style={
+                        !this.state.suburb &&
+                        this.keyChecking(this.state.general_error_msg, 'suburb')
+                          ? this.state.general_validate_css
+                          : {}
+                      }
+                      onChange={this.handleChanged}
+                      value={this.state.suburb}
+                      name="suburb"
+                      type="text"
+                      className="form-control"
+                      placeholder="Broklyn"
+                    />
+                    {!this.state.suburb &&
+                    this.keyChecking(this.state.general_error_msg, 'suburb') ? (
+                      <small id="emailHelp" className="form-text text-danger">
+                        {this.state.general_error_msg}
+                      </small>
+                    ) : null}
+                  </div>
 
-                <div className="form-group">
-                  <label>Suburb</label>
-                  <input
-                    style={this.state.suburb_css}
-                    onChange={this.handleChanged}
-                    value={this.state.suburb}
-                    name="suburb"
-                    type="text"
-                    className="form-control"
-                  />
-                  <small id="emailHelp" className="form-text text-danger">
-                    {this.state.general_error_msg}
-                  </small>
-                </div>
+                  <div className="form-group">
+                    <label>City</label>
+                    <input
+                      style={
+                        !this.state.city && this.keyChecking(this.state.general_error_msg, 'city')
+                          ? this.state.general_validate_css
+                          : {}
+                      }
+                      onChange={this.handleChanged}
+                      value={this.state.city}
+                      name="city"
+                      type="text"
+                      className="form-control"
+                      placeholder="New York"
+                    />
+                    {!this.state.city && this.keyChecking(this.state.general_error_msg, 'city') ? (
+                      <small id="emailHelp" className="form-text text-danger">
+                        {this.state.general_error_msg}
+                      </small>
+                    ) : null}
+                  </div>
 
-                <div className="form-group">
-                  <label>City</label>
-                  <input
-                    style={this.state.general_validate_css}
-                    onChange={this.handleChanged}
-                    value={this.state.city}
-                    name="city"
-                    type="text"
-                    className="form-control"
-                  />
-                  <small id="emailHelp" className="form-text text-danger">
-                    {this.state.city_validate}
-                  </small>
-                </div>
+                  <div className="form-group">
+                    <label>Zip Code</label>
+                    <input
+                      style={
+                        !this.state.zip && this.keyChecking(this.state.general_error_msg, 'zip')
+                          ? this.state.general_validate_css
+                          : {}
+                      }
+                      onChange={this.handleChanged}
+                      value={this.state.zip || ''}
+                      name="zip"
+                      type="number"
+                      className="form-control"
+                      placeholder="45673"
+                    />
+                    {!this.state.zip && this.keyChecking(this.state.general_error_msg, 'zip') ? (
+                      <small id="emailHelp" className="form-text text-danger">
+                        {this.state.general_error_msg}
+                      </small>
+                    ) : null}
+                  </div>
 
-                <div className="form-group">
-                  <label>Zip Code</label>
-                  <input
-                    style={this.state.general_validate_css}
-                    onChange={this.handleChanged}
-                    value={this.state.zip}
-                    name="zip"
-                    type="number"
-                    className="form-control"
-                  />
-                  <small id="emailHelp" className="form-text text-danger">
-                    {this.state.general_error_msg}
-                  </small>
-                </div>
+                  <div className="form-group">
+                    <label>Region</label>
+                    <input
+                      style={
+                        !this.state.region &&
+                        this.keyChecking(this.state.general_error_msg, 'region')
+                          ? this.state.general_validate_css
+                          : {}
+                      }
+                      onChange={this.handleChanged}
+                      value={this.state.region}
+                      name="region"
+                      type="text"
+                      className="form-control"
+                      placeholder="New York"
+                    />
+                    {!this.state.region &&
+                    this.keyChecking(this.state.general_error_msg, 'region') ? (
+                      <small id="emailHelp" className="form-text text-danger">
+                        {this.state.general_error_msg}
+                      </small>
+                    ) : null}
+                  </div>
 
-
-
-                {/* <div className="form-group">
-                  <label>Country</label>
-                  <CountryDropdown
+                  <div className="form-group">
+                    <label>Country</label>
+                    <input
+                      style={
+                        !this.state.country &&
+                        this.keyChecking(this.state.general_error_msg, 'country')
+                          ? this.state.general_validate_css
+                          : {}
+                      }
+                      onChange={this.handleChanged}
                       value={this.state.country}
-                      classes={'form-control'}
-                      onChange={val => this.selectCountry(val)}
-                  />
-                  <small id="emailHelp" className="form-text text-danger">
-                    {this.state.general_error_msg}
-                  </small>
-                </div>
-                <div className="form-group">
-                  <label>Region</label>
-                  <RegionDropdown
-                    classes={'form-control'}
-                    country={this.state.country}
-                    value={this.state.region}
-                    onChange={val => this.selectRegion(val)}
-                  />
-                  <small id="emailHelp" className="form-text text-danger">
-                    {this.state.general_error_msg}
-                  </small>
-                </div> */}
-            
-                <button type="submit" className="btn btn-dark btn-block">
+                      name="country"
+                      type="text"
+                      className="form-control"
+                      placeholder="US"
+                    />
+                    {!this.state.country &&
+                    this.keyChecking(this.state.general_error_msg, 'country') ? (
+                      <small id="emailHelp" className="form-text text-danger">
+                        {this.state.general_error_msg}
+                      </small>
+                    ) : null}
+                  </div>
+
+                  <button type="submit" className="btn btn-dark btn-block">
                     Submit
-                </button>
-              </form>
+                  </button>
+                </form>
+              </div>
+              <div className="col-lg-6" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 }
 
-/* istanbul ignore next */
 function mapStateToProps(state) {
   return {
     home: state.home,
   };
 }
 
-/* istanbul ignore next */
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators({ ...actions }, dispatch)
+    actions: bindActionCreators({ ...actions }, dispatch),
   };
 }
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Users);
