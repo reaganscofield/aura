@@ -237,7 +237,7 @@ export class SecurityAgentsJs extends Component {
       const agent_data = {
         id: id,
         is_online: arg,
-        is_on_trip: args,
+        is_on_trip: arg,
         username: username,
         email: email,
         first_name: firstname,
