@@ -14,7 +14,7 @@ export function queryAgents() {
     });
 
     const promise = new Promise((resolve, reject) => {
-      axios.get(`http://${__host__}:${__port__}/security_agent/`).then(
+      axios.get(`http://${__host__}:${__port__}/agent_list`).then(
         res => {
           dispatch({
             type: HOME_QUERY_AGENTS_SUCCESS,

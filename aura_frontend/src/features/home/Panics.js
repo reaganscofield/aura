@@ -24,11 +24,12 @@ export class Panics extends Component {
           {this.props.home.panics_data !== undefined && this.props.home.panics_data.length > 0 ? (
             <div className="row pt-5 mt-5">
               {this.props.home.panics_data.map(panic => (
-                <div className="col-lg-4">
-                  <div class="card border-dark mb-3 text-center">
-                    <div class="card-header">{panic.name ? panic.name : 'Emergency'}</div>
-                    <div class="card-body text-dark">
-                      <h5 class="card-title">{panic.panics_number}</h5>
+                <div key={panic.id} className="col-lg-4">
+                  <div className="card border-dark mb-3 text-center">
+                    <div className="card-header">{panic.panic_name ? panic.panic_name : 'Emergency'}</div>
+                    <div className="card-body text-dark">
+                      <h5 className="card-title">{panic.panic_number}</h5>
+                      <span>{panic.client_address}</span> <br />
                       <span>{moment(panic.timestamp).format('dddd, MMMM Do YYYY, h:mm:ss a')}</span>
                     </div>
                   </div>

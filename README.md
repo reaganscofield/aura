@@ -120,14 +120,6 @@ Your Back-End is EXPOSE on 127.0.0.1:4700 <br />
 Your Front-End is EXPOSE on 127.0.0.1:6075 <br />
 Your Database is EXPOSE on 127.0.0.1:5556 <br />
 
-last thing <br />
-
-Your can run unit tests with command <br />
-run command
-
-```
-    $ make test
-```
 
 
 

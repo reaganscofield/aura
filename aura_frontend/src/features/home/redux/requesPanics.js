@@ -8,7 +8,6 @@ import axios from 'axios';
 import { __host__, __port__ } from '../../../common/constan';
 
 export function requesPanics(args) {
-  console.log('income ', args);
   return dispatch => {
     dispatch({
       type: HOME_REQUES_PANICS_BEGIN,

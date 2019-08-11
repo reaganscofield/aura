@@ -6,24 +6,23 @@ from django.shortcuts import render
 from .models import *
 from .serializers import *
 from django.db.models import Q
-
-
 from rest_framework import status
-from geopy.geocoders import Nominatim
-
-
-
-geolocator = Nominatim()
-
 
 
 class UsersView(viewsets.ModelViewSet):
     queryset = Users.objects.all()
     serializer_class = UsersSerializers
 
+class FindUser(generics.RetrieveAPIView):
+    lookup_field = 'username'
+    queryset = Users.objects.all()
+    serializer_class = UsersSerializers    
+
+
 class CompaniesView(viewsets.ModelViewSet):
     queryset = Companies.objects.all()
     serializer_class = CompaniesSerielizers
+
 
 class CompaniesSearch(generics.ListAPIView):
     serializer_class = CompaniesSerielizers
@@ -41,11 +40,11 @@ class CompaniesSearch(generics.ListAPIView):
         
         return qs
 
+
 class VehiculeView(viewsets.ModelViewSet):
     queryset = Vehicule.objects.all()
     serializer_class = VehiculeSerializers
 
-    
 class VehiculesFilters(generics.ListAPIView):
     serializer_class = VehiculeSerializers
             
@@ -59,6 +58,7 @@ class VehiculesFilters(generics.ListAPIView):
         )
             
         return qs
+
 
 class SecuriyAgentsView(viewsets.ModelViewSet):
     queryset = SecurityAgents.objects.all()
@@ -78,85 +78,189 @@ class AgentsSearch(generics.ListAPIView):
         return qs
 
 
-
-class FindUser(generics.RetrieveAPIView):
-    lookup_field = 'username'
-    queryset = Users.objects.all()
-    serializer_class = UsersSerializers
-    
-
 class PanicsView(viewsets.ModelViewSet):
     queryset = Panics.objects.all()
     serializer_class = PanicsSerializers
 
     def create(self, request):
-        client_username = request.data["client_username"]
+        client_id = request.data["client_id"]
         security_agent = request.data["agent_id"]
-        client_phone_number = request.data["client_phone_number"]
-        client_email = request.data["client_email"]
+
 
         serializer = PanicsSerializers(data = request.data)
 
-        if Users.objects.filter(username=client_username, phone_number=client_phone_number).exists():
-            get_user = Users.objects.get(username=client_username, phone_number=client_phone_number)
+        if Users.objects.filter(id=client_id).exists():
+            get_user = Users.objects.get(id=client_id)
             get_agent = SecurityAgents.objects.get(id=security_agent)
 
             if serializer.is_valid(raise_exception=True):
 
+
+                agent_street = get_agent.current_location_street
+                agent_suburb = get_agent.current_location_suburb
+                agent_city = get_agent.current_location_city
+                agent_region = get_agent.current_location_region
+                agent_country = get_agent.current_location_country
+
+                agent_address = f"{agent_street}, {agent_suburb}, {agent_city}, {agent_country}"
+
                 street = get_user.address_street
                 suburb = get_user.address_suburb
                 city = get_user.address_city
+                region = get_user.address_region
                 country = get_user.address_country
 
-                __address = f"{street}, {suburb}, {city}, {country}"
-
-                # import geocoder
-
-
-                # g = geocoder.google('Mountain View, CA')
-
-                # print("@@@@@@@@@@@  ::: ", g)
-
-                # ###################
-                # import requests
-                # url = 'https://maps.googleapis.com/maps/api/geocode/json'
-                # # params = {'sensor': 'false', 'address': __address}
-                # params = {'sensor': False, 'address': 'Mountain View, CA'}
-                # r = requests.get(url, params=params)
-                # results = r.json()['results']
-                # # location = results[0]['geometry']['location']
-
-                # print(" location ", results)
-                # # print("I am here working ", location['lat'], location['lng'])
-
-                # ###################
-
-                # location = geolocator.geocode(__address)
-
-                # print("lat long ::: ", location.latitude, location.longitude)
-                # print(" address output", location.address)
-
-
+                client_address = f"{street}, {suburb}, {city}, {country}"
 
                 createPanics = Panics.objects.create(
                     client_id = get_user,
                     company_id = get_agent.company_id,
                     agent_id = get_agent,
-                    client_username = serializer["client_username"].value,
-                    client_phone_number = int(serializer["client_phone_number"].value),
-                    client_email = get_user.email,
                     panics_name = serializer["panics_name"].value
                 )
                 createPanics.save()
-              
-                
 
-                #serializer.save()
-
-                # mails to be send to all parties
-                # code goes here 
+                if createPanics:
+                    notify = Notifications.objects.create(
+                        client_id = get_user,
+                        panic_id = createPanics,
+                        agent_id = get_agent,
+                        company_id = get_agent.company_id,
+                        from_address = agent_address,
+                        to_address = client_address,
+                        is_active = True,
+                    )
+                    notify.save()
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
               
         else:
-            return Response({"Error": "username not and phone number finds please create an account"})    
+            return Response({"Error": "user not finds please create an account"})    
+
+
+class NotificationView(viewsets.ModelViewSet):
+    queryset = Notifications.objects.all()
+    serializer_class = NotificationSerializers
+
+
+class FilteredNotificationsByAgent(generics.ListAPIView):
+    serializer_class = NotificationsFetchSerializers
+            
+    def list(self, request):
+        qs = Notifications.objects.filter(is_active=True)
+        agent_id = self.request.query_params.get('agent_id', None)
+    
+        qs = qs.filter(
+            Q(agent_id=agent_id)
+        )
+
+        notify_data = []
+        for i in qs:
+            data = {
+                "id": i.id,
+                "client_id": i.client_id.id,
+                "client_firstname": i.client_id.first_name,
+                "client_lastname": i.client_id.last_name,
+                "client_phone_number": i.client_id.phone_number,
+                "panic_id": i.panic_id.id,
+                "panic_name": i.panic_id.panics_name,
+                "panic_number": i.panic_id.panics_number,
+                "agent_id": i.agent_id.id,
+                "company_id": i.company_id.id,
+                "from_address": i.to_address, 
+                "to_address": i.from_address,
+                "is_arrived": i.is_arrived,
+                "is_on_way" : i.is_on_way,
+                "start_time": i.start_time,
+                "ended_time": i.ended_time,
+                "is_active": i.is_active, 
+            }
+            notify_data.append(data)
+                
+        serializer = NotificationsFetchSerializers(notify_data, many=True)
+        return Response(serializer.data)
+
+
+class FetchAllPanics(generics.ListAPIView):
+    queryset = Panics.objects.all()
+    serializer_class = PanicsSerializers
+
+    def list(self, request):
+        queryset = Panics.objects.all()
+
+        data_panics = []
+        for i in queryset:
+
+            client_address = "{}, {}, {}".format(
+                i.client_id.address_street, 
+                i.client_id.address_suburb, 
+                i.client_id.address_city
+            )
+
+            agent_current_address = "{}, {}, {}".format(
+                i.agent_id.current_location_street, 
+                i.agent_id.current_location_suburb, 
+                i.agent_id.current_location_city
+            )
+
+            data = {
+                "id": i.id,
+                "panic_number": i.panics_number,
+                "panic_name": i.panics_name,
+                "timestamp": i.timestamp,
+                "client_firstname": i.client_id.first_name,
+                "client_last_name": i.client_id.last_name,
+                "client_phone_number": i.client_id.phone_number,
+                "client_phone_email": i.client_id.email,
+                "client_address": client_address,
+                "agent_firstname": i.agent_id.first_name,
+                "agent_lastname": i.agent_id.last_name,
+                "agent_phone_number": i.agent_id.phone_number,
+                "agent_phone_email": i.agent_id.email,
+                "agent_current_address": agent_current_address,
+                "vehicule_plate": i.agent_id.vehicule_id.plate_number,
+                "vehicule_name": i.agent_id.vehicule_id.name,
+                "company_name": i.company_id.name
+            }
+            data_panics.append(data)
+
+        serializer = PanicsFetchSerializers(data_panics, many=True)
+        return Response(serializer.data)
+
+        
+class FetchOnlineAgents(generics.ListAPIView):
+    queryset = SecurityAgents.objects.all()
+    serializer_class = AgentsFetchSerializers
+
+    def list(self, request):
+        queryset = SecurityAgents.objects.filter(is_online=True, is_on_trip=False)
+        agent_data = []
+
+        for i in queryset:
+            data = {
+                "id": i.id,
+                "first_name": i.first_name,
+                "last_name": i.last_name,
+                "email": i.email,
+                "phone_number":  i.phone_number,
+                "current_location_street": i.current_location_street,
+                "current_location_suburb": i.current_location_suburb,
+                "current_location_city": i.current_location_city,
+                "current_location_country": i.current_location_country,
+                "current_location_region": i.current_location_region,
+                "current_location_zip": i.current_location_zip,
+                "is_on_trip": i.is_on_trip,
+                "is_online": i.is_online,
+                "vehicule_id": i.vehicule_id.id,
+                "vehicule_name": i.vehicule_id.name,
+                "vehicule_mark": i.vehicule_id.mark,
+                "vehicule_license_number": i.vehicule_id.license_number,
+                "vehicule_plate_number": i.vehicule_id.plate_number,
+                "company_id": i.company_id.id,
+                "company_name": i.company_id.name,
+                "company_email": i.company_id.email,
+                "company_phone_number": i.company_id.phone_number,
+            }
+            agent_data.append(data)
+        serializer = AgentsFetchSerializers(agent_data, many=True)
+        return Response(serializer.data)

@@ -28,7 +28,6 @@ if (module.hot) {
     renderApp(<Root store={store} routeConfig={nextRouteConfig} />);
   });
   module.hot.accept('./Root', () => {
-    const nextRoot = require('./Root').default; 
     renderApp(<Root store={store} routeConfig={routeConfig} />);
   });
 }

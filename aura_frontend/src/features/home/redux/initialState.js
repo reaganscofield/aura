@@ -48,7 +48,18 @@ const initialState = {
 
   findUserPending: false,
   findUserError: null,
-  user_finds: {}
+  user_finds: {},
+
+  filteredNotificationsPending: false,
+  filteredNotificationsError: null,
+  notifications_data: [],
+
+  isOnWayPending: false,
+  isOnWayError: null,
+  is_on_way: {},
+
+  isArrivedPending: false,
+  isArrivedError: null
 };
 
 export default initialState;

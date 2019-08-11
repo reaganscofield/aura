@@ -9,4 +9,4 @@ run:
 shell:
 	@sudo docker-compose run web python manage.py shell
 test:
-	@sudo docker-compose run web python manage.py test au_backend
+	@sudo docker-compose run web python manage.py test 

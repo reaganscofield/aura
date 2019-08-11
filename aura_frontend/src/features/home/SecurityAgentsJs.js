@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from './redux/actions';
 import Navigations from './Navigations';
+import defaultProfile from './../../default.jpeg';
 import { Button, ButtonGroup, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 export class SecurityAgentsJs extends Component {
@@ -50,6 +51,9 @@ export class SecurityAgentsJs extends Component {
       createProfileForm: false,
       searchProfileForm: true,
       updateLocationForm: false,
+
+      start_trip: true,
+      end_trip: false,
     };
   }
 
@@ -62,7 +66,6 @@ export class SecurityAgentsJs extends Component {
   }
 
   onRadioBtnClick(rSelected) {
-    console.log('cliked');
     this.setState({
       rSelected,
       is_online: true,
@@ -222,7 +225,6 @@ export class SecurityAgentsJs extends Component {
       lastname,
       city,
       company_id,
-      is_online,
       street,
       suburb,
       zip,
@@ -235,6 +237,7 @@ export class SecurityAgentsJs extends Component {
       const agent_data = {
         id: id,
         is_online: arg,
+        is_on_trip: args,
         username: username,
         email: email,
         first_name: firstname,
@@ -283,6 +286,7 @@ export class SecurityAgentsJs extends Component {
               this.setState(prevState => ({
                 modal: !prevState.modal,
               }));
+              this.props.actions.filteredNotifications(profiles.id);
             }
           }
         })
@@ -331,6 +335,37 @@ export class SecurityAgentsJs extends Component {
   update = event => {
     event.preventDefault();
     this.Update_setOnline_setOffline();
+  };
+
+  isOnway = id => {
+    const data = {
+      id: id,
+      is_on_way: true,
+      start_time: new Date(),
+    };
+    this.props.actions.isOnWay(data).then(res => {
+      if (res.data) {
+        this.setState({
+          start_trip: false,
+          end_trip: true,
+        });
+        this.Update_setOnline_setOffline(true);
+      }
+    });
+  };
+
+  isArrived = id => {
+    const data = {
+      id: id,
+      is_arrived: true,
+      ended_time: new Date(),
+      is_active: false,
+    };
+    this.props.actions.isOnWay(data).then(res => {
+      if (res.data) {
+        this.Update_setOnline_setOffline(false);
+      }
+    });
   };
 
   render() {
@@ -740,7 +775,7 @@ export class SecurityAgentsJs extends Component {
             <div className="mt-3 mb-3 text-center">
               <ButtonGroup>
                 <Button
-                  class="btn-block"
+                  className="btn-block"
                   color="secondary"
                   onClick={() => this.onRadioBtnClick(1)}
                   active={this.state.rSelected === 1}
@@ -840,7 +875,7 @@ export class SecurityAgentsJs extends Component {
                       />
                       {!this.state.city &&
                       this.keyChecking(this.state.general_error_msg, 'city') ? (
-                        <small id="emailHelp" className="form-text text-danger">
+                        <small className="form-text text-danger">
                           {this.state.general_error_msg}
                         </small>
                       ) : null}
@@ -850,6 +885,50 @@ export class SecurityAgentsJs extends Component {
                       Submit
                     </button>
                   </form>
+                ) : null}
+
+                {this.props.home.notifications_data !== undefined &&
+                this.props.home.notifications_data.length > 0 ? (
+                  <div>
+                    <h4 className="text-center">Panic Notifications</h4>
+                    <hr />
+                    {this.props.home.notifications_data.map(element => (
+                      <div key={element.id} className="media">
+                        <img
+                          src={defaultProfile}
+                          width="180px"
+                          className="mr-3"
+                          alt="defaultProfile"
+                        />
+                        <div className="media-body mt-3">
+                          <h5 className="mt-0">
+                            {`
+                             ${element.client_firstname}  
+                             ${element.client_lastname}
+                             `}
+                          </h5>
+                          <h5 className="mt-0">0{element.client_phone_number}</h5>
+                          <span>{element.to_address}</span> <br />
+                          {this.state.start_trip === true ? (
+                            <button
+                              className="btn btn-dark"
+                              onClick={() => this.isOnway(element.id)}
+                            >
+                              Start Trip
+                            </button>
+                          ) : null}
+                          {this.state.end_trip === true ? (
+                            <button
+                              className="btn btn-dark"
+                              onClick={() => this.isArrived(element.id)}
+                            >
+                              End Trip
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 ) : null}
               </div>
             </div>

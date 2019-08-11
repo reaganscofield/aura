@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from './redux/actions';
+import defaultProfile from './../../default.jpeg';
 
 export class Request extends Component {
   static propTypes = {
@@ -14,15 +15,18 @@ export class Request extends Component {
     super(props);
 
     this.state = {
+      currentLatLng: null,
       username: '',
       panic: '',
-      panic_name: '',
+      panic_name: 'Emergency',
       phone_number: '',
       general_validate_css: {},
       general_error_msg: '',
       nearest_agents: [],
       user_not_find: null,
       user: null,
+      success: null,
+      selected_agent: null,
     };
   }
 
@@ -110,20 +114,39 @@ export class Request extends Component {
       client_id: user.id,
       agent_id: nearest_agents[0].id,
       panics_name: panic_name,
-      client_username: user.username,
-      client_phone_number: user.phone_number,
-      client_email: user.email,
       company_id: nearest_agents[0].company_id
     }
     this.props.actions.requesPanics(panics_data).then((res) => {
        if(res.data){
+         this.setState({ 
+           success: "success requested panic",
+           selected_agent: nearest_agents[0],
+          });
          return res.data;
        }
     });
   }
 
+
+  getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          console.log(position.coords);
+          this.setState(prevState => ({
+            currentLatLng: {
+                ...prevState.currentLatLng,
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            }
+          }))
+        }
+      )
+    } 
+  }
+
   render() {
-    
+    console.log(" @@@@@@@@@@@@@@@@@@@@@@  ", this.state.selected_agent)
     return (
       <div className="home-request">
         <div className="container">
@@ -171,47 +194,91 @@ export class Request extends Component {
          
 
         {this.state.user !== null ?
-          <form onSubmit={this.comfirmPanic}>
-             <div class="card border-dark mb-3 text-center">
-                  <div class="card-header">Your Address</div>
-                  <div class="card-body text-dark">
-                    <h5 class="card-title">
+          <div>
+          
+              <div className="card border-dark mb-3 text-center">
+                  <div className="card-header">Your Address</div>
+                  <div className="card-body text-dark">
+                    <h5 className="card-title">
                       {this.state.user.address_street}
                     </h5>
-                    <h6 class="card-title">
+                    <h6 className="card-title">
                       {this.state.user.address_suburb}
                     </h6>
-                    <h6 class="card-title">
+                    <h6 className="card-title">
                       {this.state.user.address_city}
                     </h6>
+                    <button onClick={this.getCurrentLocation} className="btn btn-dark">use your current location</button>
                   </div>
-                </div>
-            <div className="form-group">
-              <label>Phone Number</label>
-              <input
-                onChange={this.handleChanged}
-                value={this.state.user.phone_number}
-                name="phone_number"
-                type="number"
-                className="form-control"
-              />
-            </div>
-            <div className="form-group">
-              <label>Emergency Name</label>
-              <input
-                onChange={this.handleChanged}
-                value={this.state.panic_name}
-                name="panic_name"
-                type="text"
-                className="form-control"
-              />
-            </div>
+              </div>
+
+
+            <form onSubmit={this.comfirmPanic}>
+              <div className="form-group">
+                <label>Emergency Name</label>
+                <input
+                  onChange={this.handleChanged}
+                  value={this.state.panic_name}
+                  name="panic_name"
+                  type="text"
+                  className="form-control"
+                />
+              </div>
 
             <button type="submit" className="btn btn-dark btn-block">
               Request Panic
             </button>
-          </form> :
+           </form> 
+          </div> :
           null
+        }
+
+        {this.state.success !== null ?
+          <div class="alert text-center mt-3 alert-success" role="alert">
+            {this.state.success}
+          </div>
+          : null
+        }
+
+        {this.state.selected_agent !== null ?
+          <div className="media">
+            <img src={defaultProfile} width="180px" className="mr-3" alt="defaultProfile" />
+            <div className="media-body mt-3">
+              <h5 className="mt-0">
+               {
+                 `
+                 ${this.state.selected_agent.first_name}  
+                 ${this.state.selected_agent.last_name}
+                 `
+               }
+              </h5>
+              <h5 className="mt-0">
+               0{this.state.selected_agent.phone_number}
+              </h5>
+              <p>
+                {
+                  `
+                  ${this.state.selected_agent.vehicule_name} 
+                  ${this.state.selected_agent.vehicule_mark} |
+                  ${this.state.selected_agent.vehicule_plate_number}
+                  `
+                }
+              </p>
+              <span>
+                {
+                  `
+                  ${this.state.selected_agent.current_location_street}, 
+                  ${this.state.selected_agent.current_location_suburb},
+                  ${this.state.selected_agent.current_location_city}
+                  `
+                }
+              </span> <br />
+              <span>
+                {this.state.selected_agent.current_location_country}
+              </span>
+            </div>
+          </div>
+          : null
         }
 
 

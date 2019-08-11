@@ -12,6 +12,9 @@ import { reducer as queryAgentsReducer } from './queryAgents';
 import { reducer as queryPanicsReducer } from './queryPanics';
 import { reducer as requesPanicsReducer } from './requesPanics';
 import { reducer as findUserReducer } from './findUser';
+import { reducer as filteredNotificationsReducer } from './filteredNotifications';
+import { reducer as isOnWayReducer } from './isOnWay';
+import { reducer as isArrivedReducer } from './isArrived';
 
 
 const reducers = [
@@ -28,6 +31,9 @@ const reducers = [
   queryPanicsReducer,
   requesPanicsReducer,
   findUserReducer,
+  filteredNotificationsReducer,
+  isOnWayReducer,
+  isArrivedReducer,
 
 ];
 

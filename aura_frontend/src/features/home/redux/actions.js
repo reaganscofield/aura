@@ -11,4 +11,7 @@ export { queryAgents, dismissQueryAgentsError } from './queryAgents';
 export { queryPanics, dismissQueryPanicsError } from './queryPanics';
 export { requesPanics, dismissRequesPanicsError } from './requesPanics';
 export { findUser, dismissFindUserError } from './findUser';
+export { filteredNotifications, dismissFilteredNotificationsError } from './filteredNotifications';
+export { isOnWay, dismissIsOnWayError } from './isOnWay';
+export { isArrived, dismissIsArrivedError } from './isArrived';
 
