@@ -455,7 +455,7 @@ export class SecurityAgentsJs extends Component {
                   {this.state.createProfileForm === true ? (
                     <form onSubmit={this.submisson}>
                       {this.state.success !== null ? (
-                        <div class="alert alert-success" role="alert">
+                        <div className="alert alert-success" role="alert">
                           {this.state.success}
                         </div>
                       ) : null}
@@ -775,7 +775,6 @@ export class SecurityAgentsJs extends Component {
             <div className="mt-3 mb-3 text-center">
               <ButtonGroup>
                 <Button
-                  className="btn-block"
                   color="secondary"
                   onClick={() => this.onRadioBtnClick(1)}
                   active={this.state.rSelected === 1}
@@ -783,7 +782,6 @@ export class SecurityAgentsJs extends Component {
                   Online
                 </Button>
                 <Button
-                  class="btn-block"
                   color="secondary"
                   onClick={() => this.offRadioBtnClick(2)}
                   active={this.state.rSelected === 2}

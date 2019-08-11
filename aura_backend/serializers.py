@@ -114,7 +114,7 @@ class SecurityAgentsSerializers(serializers.ModelSerializer):
             "company_id", 
             "first_name", 
             "last_name", 
-            "is_on_trip"
+            "is_on_trip",
             "phone_number", 
             "current_location_street", 
             "current_location_suburb", 
