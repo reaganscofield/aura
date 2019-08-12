@@ -27,6 +27,7 @@ export class Request extends Component {
       user: null,
       success: null,
       selected_agent: null,
+      agent_not_find: null,
     };
   }
 
@@ -110,21 +111,27 @@ export class Request extends Component {
   comfirmPanic = (event) => {
     event.preventDefault();
     const { user, nearest_agents, panic_name } = this.state;
-    const panics_data = {
-      client_id: user.id,
-      agent_id: nearest_agents[0].id,
-      panics_name: panic_name,
-      company_id: nearest_agents[0].company_id
+    if(nearest_agents[0]){
+      const panics_data = {
+        client_id: user.id,
+        agent_id: nearest_agents[0].id,
+        panics_name: panic_name,
+        company_id: nearest_agents[0].company_id
+      }
+      this.props.actions.requesPanics(panics_data).then((res) => {
+         if(res.data){
+           this.setState({ 
+             success: "success requested panic",
+             selected_agent: nearest_agents[0],
+            });
+           return res.data;
+         }
+      });
+    } else {
+      this.setState({
+        agent_not_find: "sorry we don't have avaible agent for the moment"
+      });
     }
-    this.props.actions.requesPanics(panics_data).then((res) => {
-       if(res.data){
-         this.setState({ 
-           success: "success requested panic",
-           selected_agent: nearest_agents[0],
-          });
-         return res.data;
-       }
-    });
   }
 
 
@@ -146,7 +153,6 @@ export class Request extends Component {
   }
 
   render() {
-    console.log(" @@@@@@@@@@@@@@@@@@@@@@  ", this.state.selected_agent)
     return (
       <div className="home-request">
         <div className="container">
@@ -191,7 +197,6 @@ export class Request extends Component {
         }
             </div> : null
           }
-         
 
         {this.state.user !== null ?
           <div>
@@ -231,6 +236,12 @@ export class Request extends Component {
            </form> 
           </div> :
           null
+        }
+
+        {this.state.agent_not_find !== null ?
+          <div className="alert alert-danger mt-3 text-center" role="alert">
+          {this.state.agent_not_find}
+         </div> : null
         }
 
         {this.state.success !== null ?
