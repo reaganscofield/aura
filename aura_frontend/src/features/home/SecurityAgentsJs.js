@@ -366,6 +366,7 @@ export class SecurityAgentsJs extends Component {
     const data = {
       id: id,
       is_arrived: true,
+      is_on_way: false,
       ended_time: new Date(),
       is_active: false,
     };
