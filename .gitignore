@@ -10,3 +10,7 @@ aura_frontend/npm-debug.log*
 aura_frontend/yarn-debug.log*
 aura_frontend/yarn-error.log*
 .env
+aura_backend/migrations/**
+!**/aura_backend/migrations
+!**/aura_backend/migrations/__init__.py
+
