@@ -7,6 +7,7 @@ import Navigations from './Navigations';
 import Request from './Request';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
+
 export class DefaultPage extends Component {
   static propTypes = {
     home: PropTypes.object.isRequired,
@@ -40,15 +41,18 @@ export class DefaultPage extends Component {
         <div className="home-page" id="top">
           <div className="hero-banner">
             <div className="row">
-              <div className="hero-banner__left large-3 columns" />
-              <div className="hero-banner__middle large-6 columns">
-                <h1>Request Panic</h1>
-                <button onClick={this.modalOpen} className="btn-lg white" data-open="contact-modal">
-                  Request
-                </button>
-                <div className="rwd-devices" />
+              <div className="col-lg-12">
+                <div className="container text-center">
+                  <h1>Request Panic</h1>
+                  <button
+                    onClick={this.modalOpen}
+                    className="btn-lg white"
+                    data-open="contact-modal"
+                  >
+                    Request
+                  </button>
+                </div>
               </div>
-              <div className="hero-banner__right large-3 columns" />
             </div>
           </div>
         </div>
