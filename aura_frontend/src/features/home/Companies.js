@@ -33,6 +33,8 @@ export class Companies extends Component {
 
       searchCompanyForm: true,
       createCompanyForm: false,
+
+      company_not_find: null,
     };
   }
 
@@ -129,12 +131,20 @@ export class Companies extends Component {
         .searchCompany(company_data)
         .then(res => {
           if (res.data) {
-            const company = res.data[0];
-            this.setState({
-              initializedCompanies: company,
-              name: '',
-              phone_number: null,
-            });
+            if(res.data.length > 0){
+              const company = res.data[0];
+              this.setState({
+                initializedCompanies: company,
+                name: '',
+                phone_number: null,
+              });
+            } else {
+                this.setState({
+                  company_not_find: "company doesn't exists please create a company",
+                  searchCompanyForm: false,
+                  createCompanyForm: true,
+                });
+            }
           }
         })
         .catch(error => {
@@ -283,6 +293,14 @@ export class Companies extends Component {
                     </form>
                   ) : null}
                 </div>
+
+
+                {this.state.company_not_find !== null ?
+                    <div class="alert text-center alert-danger" role="alert">
+                      {this.state.company_not_find}
+                    </div>
+                  : null 
+                }
 
                 <div className="mt-5 mb-5">
                   {this.state.createCompanyForm === true ? (
