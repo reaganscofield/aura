@@ -70,7 +70,9 @@ export class SecurityAgentsJs extends Component {
       rSelected,
       is_online: true,
     });
-    this.Update_setOnline_setOffline(true);
+    const is_offline_or_is_online = true;
+    const is_on_trip = false;
+    this.Update_setOnline_setOffline(is_offline_or_is_online, is_on_trip);
   }
 
   offRadioBtnClick(rSelected) {
@@ -78,7 +80,9 @@ export class SecurityAgentsJs extends Component {
       rSelected,
       is_online: false,
     });
-    this.Update_setOnline_setOffline(false);
+    const is_offline_or_is_online = false;
+    const is_on_trip = false;
+    this.Update_setOnline_setOffline(is_offline_or_is_online, is_on_trip);
   }
 
   handleChanged = e => {
@@ -216,7 +220,7 @@ export class SecurityAgentsJs extends Component {
     });
   };
 
-  Update_setOnline_setOffline = arg => {
+  Update_setOnline_setOffline = (is_offline_or_is_online, is_on_trip) => {
     const {
       id,
       username,
@@ -236,8 +240,8 @@ export class SecurityAgentsJs extends Component {
     if (id !== null) {
       const agent_data = {
         id: id,
-        is_online: arg,
-        is_on_trip: arg,
+        is_online: is_offline_or_is_online,
+        is_on_trip: is_on_trip,
         username: username,
         email: email,
         first_name: firstname,
@@ -334,7 +338,9 @@ export class SecurityAgentsJs extends Component {
 
   update = event => {
     event.preventDefault();
-    this.Update_setOnline_setOffline();
+    const is_offline_or_is_online = true;
+    const is_on_trip = false;
+    this.Update_setOnline_setOffline(is_offline_or_is_online , is_on_trip);
   };
 
   isOnway = id => {
@@ -349,7 +355,9 @@ export class SecurityAgentsJs extends Component {
           start_trip: false,
           end_trip: true,
         });
-        this.Update_setOnline_setOffline(true);
+        const is_offline_or_is_online = true;
+        const  is_on_trip = true;
+        this.Update_setOnline_setOffline(is_offline_or_is_online, is_on_trip);
       }
     });
   };
@@ -363,7 +371,9 @@ export class SecurityAgentsJs extends Component {
     };
     this.props.actions.isOnWay(data).then(res => {
       if (res.data) {
-        this.Update_setOnline_setOffline(false);
+        const is_offline_or_is_online = true;
+        const is_on_trip = false
+        this.Update_setOnline_setOffline(is_offline_or_is_online, is_on_trip);
       }
     });
   };
