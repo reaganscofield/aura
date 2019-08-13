@@ -54,6 +54,8 @@ export class SecurityAgentsJs extends Component {
 
       start_trip: true,
       end_trip: false,
+
+      agent_not_find: null,
     };
   }
 
@@ -281,16 +283,24 @@ export class SecurityAgentsJs extends Component {
         .searchProfiles(profile_data)
         .then(res => {
           if (res.data) {
-            const profiles = res.data[0];
-            if (profiles.id) {
-              this.updatedState(profiles);
-              this.setState({
-                id: profiles.id,
-              });
-              this.setState(prevState => ({
-                modal: !prevState.modal,
-              }));
-              this.props.actions.filteredNotifications(profiles.id);
+            if(res.data.length > 0) {
+              const profiles = res.data[0];
+              if (profiles.id) {
+                this.updatedState(profiles);
+                this.setState({
+                  id: profiles.id,
+                });
+                this.setState(prevState => ({
+                  modal: !prevState.modal,
+                }));
+                this.props.actions.filteredNotifications(profiles.id);
+              }
+            } else {
+                this.setState({
+                  agent_not_find: "agent not found please create an agent",
+                  createProfileForm: true,
+                  searchProfileForm: false,
+                })
             }
           }
         })
@@ -460,6 +470,13 @@ export class SecurityAgentsJs extends Component {
                       </button>
                     </form>
                   ) : null}
+
+                  {this.state.agent_not_find !== null ?
+                    <div className="alert alert-danger text-center" role="alert">
+                      {this.state.agent_not_find}
+                    </div>
+                    : null
+                  }
                 </div>
 
                 <div className="mt-5 mb-5">
@@ -522,6 +539,9 @@ export class SecurityAgentsJs extends Component {
                       <div className="form-group">
                         <label>Companies</label>
                         <select onChange={this.handleChangeCompany} className="form-control">
+                          <option>
+                            Select Company
+                          </option>
                           {this.props.home.companies_data.map(element => (
                             <option key={element.id} value={element.id}>
                               {element.name}
@@ -606,6 +626,9 @@ export class SecurityAgentsJs extends Component {
                         <div className="form-group">
                           <label>Vehicule</label>
                           <select onChange={this.handleChangeVehicule} className="form-control">
+                            <option>
+                              Select Vehicule
+                            </option>
                             {this.props.home.vehicules_data.map(element => (
                               <option key={element.id} value={element.id}>
                                 {element.name}
