@@ -8,7 +8,6 @@ import axios from 'axios';
 import { __host__, __port__ } from '../../../common/constan';
 
 export function agentProfiles(args) {
-  console.log('aaaa ', args);
   return dispatch => {
     dispatch({
       type: HOME_AGENT_PROFILES_BEGIN,

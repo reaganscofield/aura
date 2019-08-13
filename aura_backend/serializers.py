@@ -119,6 +119,7 @@ class SecurityAgentsSerializers(serializers.ModelSerializer):
             "current_location_street", 
             "current_location_suburb", 
             "current_location_city", 
+            "current_location_region",
             "current_location_country", 
             "vehicule_id", 
             "current_location_zip", "is_online"
