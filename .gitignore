@@ -13,4 +13,5 @@ aura_frontend/yarn-error.log*
 aura_backend/migrations/**
 !**/aura_backend/migrations
 !**/aura_backend/migrations/__init__.py
+nodejs_aura_api/node_modules
 

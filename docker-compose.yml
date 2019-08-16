@@ -50,6 +50,19 @@ services:
         depends_on:
             - web
         command: npm start
+    
+    nodejs_aura_api:
+        build: ./nodejs_aura_api
+        volumes:
+            - ./nodejs_aura_api:/nodejs_aura
+            - /nodejs_aura/node_modules
+        ports:
+            - "8002:8002"
+        environment:
+            - NODE_ENV=development
+        depends_on:
+            - postgres
+        command: npm start
    
 volumes:
   postgres-data:

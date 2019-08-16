@@ -10,3 +10,5 @@ shell:
 	@sudo docker-compose run web python manage.py shell
 test:
 	@sudo docker-compose run web python manage.py test 
+nodemigrate:
+	@sudo docker-compose run nodejs_aura_api npx sequelize db:migrate
