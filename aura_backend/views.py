@@ -39,8 +39,7 @@ class CompaniesSearch(generics.ListAPIView):
         )
         
         return qs
-
-
+    
 class VehiculeView(viewsets.ModelViewSet):
     queryset = Vehicule.objects.all()
     serializer_class = VehiculeSerializers

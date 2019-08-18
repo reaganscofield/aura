@@ -2,7 +2,22 @@ from .models import *
 from rest_framework import serializers
 
 
+class PanicsSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Panics
+        fields = [
+            "id", 
+            "client_id", 
+            "agent_id", 
+            "panics_name", 
+            "timestamp", 
+            "panics_number",
+            "company_id",
+        ]
+        read_only_fields = ["id", "panics_number", "timestamp"]
+
 class UsersSerializers(serializers.ModelSerializer):
+    panics = PanicsSerializers(many=True, read_only=True)
     class Meta:
         model = Users
         fields = [ 
@@ -18,6 +33,7 @@ class UsersSerializers(serializers.ModelSerializer):
             "address_city", 
             "address_country", 
             "address_region", 
+            "panics"
         ]
         read_only_fields = ["id"]
 
@@ -128,19 +144,7 @@ class SecurityAgentsSerializers(serializers.ModelSerializer):
 
 
 
-class PanicsSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Panics
-        fields = [
-            "id", 
-            "client_id", 
-            "agent_id", 
-            "panics_name", 
-            "timestamp", 
-            "panics_number",
-            "company_id",
-        ]
-        read_only_fields = ["id", "panics_number", "timestamp"]
+
     
 class PanicsFetchSerializers(serializers.Serializer):
     id = serializers.UUIDField()

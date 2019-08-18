@@ -80,7 +80,7 @@ class SecurityAgents(models.Model):
 
 class Panics(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    client_id = models.ForeignKey(Users, on_delete=models.CASCADE)
+    client_id = models.ForeignKey(Users, related_name='panics', on_delete=models.CASCADE)
     company_id = models.ForeignKey(Companies, on_delete=models.CASCADE)
     agent_id = models.ForeignKey(SecurityAgents, on_delete=models.CASCADE)
     panics_name = models.CharField(max_length=250, null=True, default='Emergency')
@@ -98,7 +98,7 @@ class Panics(models.Model):
 
 class Notifications(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    client_id = models.ForeignKey(Users, on_delete=models.CASCADE)
+    client_id = models.ForeignKey(Users,  on_delete=models.CASCADE)
     panic_id = models.ForeignKey(Panics, on_delete=models.CASCADE)
     agent_id = models.ForeignKey(SecurityAgents, on_delete=models.CASCADE)
     company_id = models.ForeignKey(Companies, on_delete=models.CASCADE)

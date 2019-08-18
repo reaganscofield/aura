@@ -56,8 +56,13 @@ module.exports = {
     },
 
     list(request, response){
-        return PanicsModel.findAll()
-            .then((Panics) => response.status(200).send(Panics))
-            .catch((error) => response.status(400).send(error));
+        return PanicsModel.findAll({
+            include: {
+                model: UsersModel,
+                required: true
+            }
+        })
+        .then((Panics) => response.status(200).send(Panics))
+        .catch((error) => response.status(400).send(error));
     }
 }

@@ -1,5 +1,6 @@
 const AgentModel = require("../models").SecurityAgents;
 const VehiculeModel = require("../models").Vehicule;
+const CompaniesModel = require("../models").Companies;
 
 module.exports = {
     create(request, response){
