@@ -12,3 +12,5 @@ test:
 	@sudo docker-compose run web python manage.py test 
 nodemigrate:
 	@sudo docker-compose run nodejs_aura_api npx sequelize db:migrate
+node_test:
+	@sudo docker-compose run nodejs_aura_api npm test
